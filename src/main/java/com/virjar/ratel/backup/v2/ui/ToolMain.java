@@ -4,10 +4,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.virjar.ratel.backup.v2.Configs;
 import com.virjar.ratel.backup.v2.Threads;
 import com.virjar.ratel.backup.v2.devices.DevicesManager;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -26,8 +29,8 @@ public class ToolMain {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                int option = JOptionPane.showConfirmDialog(null, "是否退出程序？",
-                        "确认框", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                int option = JOptionPane.showConfirmDialog(null, "是否退出程序？", "确认框", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
                 if (option == JOptionPane.YES_OPTION) {
                     JSONObject taskStatus = Configs.taskProcessJson();
                     taskStatus.putAll(DevicesManager.deviceSnapshot());
@@ -62,7 +65,6 @@ public class ToolMain {
         return jPanel;
     }
 
-
     private static Component createDevicePanel() {
         JPanel jPanel = new JPanel(new GridLayout(2, 1));
 
@@ -74,11 +76,9 @@ public class ToolMain {
         UIComponent.DevicePanel.deviceListContainer = verticalBox;
         jPanel.add(verticalBox);
 
-
         Box opPanelBox = Box.createVerticalBox();
         opPanelBox.setBorder(LineBorder.createGrayLineBorder());
         jPanel.add(opPanelBox);
-
 
         JPanel title = new JPanel();
         title.setMaximumSize(new Dimension(200, 30));
@@ -100,7 +100,6 @@ public class ToolMain {
         btns.add(deleteBtn);
         btns.add(pauseBtn);
 
-
         JPanel opStatusPanel = new JPanel();
         opPanelBox.add(opStatusPanel);
         opStatusPanel.setMaximumSize(new Dimension(200, 30));
@@ -115,14 +114,12 @@ public class ToolMain {
         JLabel bitRatePanelLabel = new JLabel();
         bitRatePanel.add(bitRatePanelLabel);
 
-
         JPanel processPanel = new JPanel();
         opPanelBox.add(processPanel);
         processPanel.setMaximumSize(new Dimension(200, 30));
         processPanel.add(new JLabel("当前进度:"));
         JLabel processPanelLabel = new JLabel();
         processPanel.add(processPanelLabel);
-
 
         opPanelBox.add(Box.createVerticalGlue());
 
@@ -155,12 +152,45 @@ public class ToolMain {
         JLabel dataPathLabel = new JLabel("备份地址:未知");
         jPanel.add(dataPathLabel);
 
+        JLabel targetPackageLabel = new JLabel("目标应用:未知");
+        targetPackageLabel.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                String targetPackageName = JOptionPane.showInputDialog("输入目标应用包名");
+                System.out.println("目标应用名称：" + targetPackageName);
+                if (StringUtils.isNotBlank(targetPackageName)) {
+                    Configs.setOpApp(targetPackageName);
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+        jPanel.add(targetPackageLabel);
+
         UIComponent.StatusBar.adbStatusTextLabel = statusLabel;
         UIComponent.StatusBar.diskTextLabel = diskLabel;
         UIComponent.StatusBar.dataPathTextLabel = dataPathLabel;
+        UIComponent.StatusBar.targetPackageTextLabel = targetPackageLabel;
         return jPanel;
     }
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(ToolMain::createAndShowGUI);

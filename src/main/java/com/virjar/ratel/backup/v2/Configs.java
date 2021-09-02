@@ -15,9 +15,13 @@ public class Configs {
     private static final File configPropertiesPath = resolveConfigPath();
     private static final Properties configProperties = loadConfigProperties();
 
+    public static void setOpApp(String targetPackage) {
+        configProperties.setProperty("op_package",targetPackage);
+        saveConfig();
+    }
+
     public static String getOpApp() {
-        //return configProperties.getProperty("op_package");
-        return "com.sdu.didi.psnger";
+        return configProperties.getProperty("op_package");
     }
 
     public static File resolveBackupDir() {
@@ -25,7 +29,7 @@ public class Configs {
         if (StringUtils.isNotBlank(backupDir)) {
             return makeDir(new File(backupDir));
         }
-        File file = new File(configPropertiesPath.getParent(), ".ratel_backup");
+        File file = new File(configPropertiesPath.getParent(), "ratel_backup");
         configProperties.setProperty("backup_dir", file.getAbsolutePath());
         saveConfig();
         return makeDir(file);

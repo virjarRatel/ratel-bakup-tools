@@ -7,6 +7,7 @@ import com.virjar.ratel.backup.v2.copy.CopyTask;
 import com.virjar.ratel.backup.v2.devices.Device;
 import com.virjar.ratel.backup.v2.devices.DevicesManager;
 import com.virjar.ratel.backup.v2.devices.TaskStatus;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.io.File;
@@ -81,12 +82,16 @@ public class UIComponent {
         public static JLabel adbStatusTextLabel = null;
         public static JLabel diskTextLabel = null;
         public static JLabel dataPathTextLabel;
+        public static JLabel targetPackageTextLabel;
 
         public static void refresh() {
             Threads.uiSecondThread.execute(() -> {
                 File backupDir = Configs.resolveBackupDir();
 
                 SwingUtilities.invokeLater(() -> dataPathTextLabel.setText("备份地址:" + backupDir.getAbsolutePath()));
+
+                String targetPackage = Configs.getOpApp();
+                SwingUtilities.invokeLater(() -> targetPackageTextLabel.setText("目标应用:" + (StringUtils.isBlank(targetPackage) ? "点击输入包名" : targetPackage)));
 
                 int spaceFree = (int) ((backupDir.getFreeSpace() * 100) / backupDir.getTotalSpace());
                 SwingUtilities.invokeLater(() -> diskTextLabel.setText("磁盘剩余:" + spaceFree + "%"));
